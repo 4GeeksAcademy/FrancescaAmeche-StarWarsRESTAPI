@@ -48,11 +48,21 @@ def view_people():
     result = list(map(lambda item: item.serialize(), all_people))
     return jsonify(result), 200
 
+@app.route('/people/<int:person_id>', methods=['GET'])
+def view_person(person_id):
+    person = People.query.filter_by(id=person_id).first()
+    return jsonify(person.serialize()), 200
+
 @app.route('/planets', methods=['GET'])
 def view_planets():
     all_planets = Planets.query.all()
     result = list(map(lambda item: item.serialize(), all_planets))
     return jsonify(result), 200
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def view_planet(planet_id):
+    planet = Planets.query.filter_by(id=planet_id).first()
+    return jsonify(planet.serialize()), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
