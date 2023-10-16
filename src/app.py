@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, People, Planets
+from models import db, User, People, Planets, FavoritePeople, FavoritePlanets
 #from models import Person
 
 app = Flask(__name__)
@@ -48,10 +48,10 @@ def view_people():
     result = list(map(lambda item: item.serialize(), all_people))
     return jsonify(result), 200
 
-@app.route('/people/<int:person_id>', methods=['GET'])
-def view_person(person_id):
-    person = People.query.filter_by(id=person_id).first()
-    return jsonify(person.serialize()), 200
+@app.route('/people/<int:people_id>', methods=['GET'])
+def view_person(people_id):
+    people = People.query.filter_by(id=people_id).first()
+    return jsonify(people.serialize()), 200
 
 @app.route('/planets', methods=['GET'])
 def view_planets():
@@ -63,6 +63,32 @@ def view_planets():
 def view_planet(planet_id):
     planet = Planets.query.filter_by(id=planet_id).first()
     return jsonify(planet.serialize()), 200
+
+@app.route('/user/favorites/<int:user_id>', methods=['GET'])
+def view_favorites(user_id):
+    favorite_people = FavoritePeople.query.filter_by(id=user_id).first()
+    favorite_planets = FavoritePlanets.query.filter_by(id=user_id).first()
+    favorites = favorite_planets.append(favorite_people)
+    return jsonify(favorites.serialize()), 200
+
+@app.route('/favorite/people/<int:people_id>', methods=['POST'])
+def create_favorite_person(people_id):
+    body = request.get_json()
+    favorite_person = FavoritePeople(people_id=body["people_id"],user_id=body["user_id"])
+    db.session.add(favorite_person)
+    db.session.commit()
+    response_body = {"crear un favorito"}
+    return jsonify(response_body), 200
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
+def create_favorite_planet(planet_id):
+    body = request.get_json()
+    favorite_planet = FavoritePlanets(planet_id=body["planet_id"],user_id=body["user_id"])
+    db.session.add(favorite_planet)
+    db.session.commit()
+    response_body = {"crear un favorito"}
+    return jsonify(response_body), 200
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
