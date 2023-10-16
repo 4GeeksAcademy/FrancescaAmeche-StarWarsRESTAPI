@@ -26,6 +26,7 @@ class People(db.Model):
     birth_year = db.Column(db.String(80), unique=False, nullable=False)
     height = db.Column(db.Integer(), unique=False, nullable=False)
     mass = db.Column(db.Integer(), unique=False, nullable=False)
+    favorite_people = db.relationship("FavoritePeople", backref="people", lazy=True)
 
     def __repr__(self):
         return '<People %r>' % self.name
@@ -43,6 +44,7 @@ class Planets(db.Model):
     population = db.Column(db.Integer(), unique=False, nullable=False)
     terrain = db.Column(db.String(80), unique=False, nullable=False)
     climate = db.Column(db.String(80), unique=False, nullable=False)
+    favorite_planets = db.relationship("FavoritePlanets", backref="planets", lazy=True)
 
     def __repr__(self):
         return '<Planets %r>' % self.name

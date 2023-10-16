@@ -66,10 +66,11 @@ def view_planet(planet_id):
 
 @app.route('/user/favorites/<int:user_id>', methods=['GET'])
 def view_favorites(user_id):
-    favorite_people = FavoritePeople.query.filter_by(id=user_id).first()
-    favorite_planets = FavoritePlanets.query.filter_by(id=user_id).first()
-    favorites = favorite_planets.append(favorite_people)
-    return jsonify(favorites.serialize()), 200
+    favorite_people = FavoritePeople.query.filter_by(id=user_id).all()
+    favorite_planets = FavoritePlanets.query.filter_by(id=user_id).all()
+    favorites = favorite_planets + favorite_people
+    result = list(map(lambda item: item.serialize(), favorites))
+    return jsonify(result), 200
 
 @app.route('/favorite/people/<int:people_id>', methods=['POST'])
 def create_favorite_person(people_id):
