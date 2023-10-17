@@ -75,7 +75,7 @@ def view_favorites():
 @app.route('/favorite/people/<int:people_id>', methods=['POST'])
 def create_favorite_person(people_id):
     body = request.get_json()
-    favorite_person = FavoritePeople(people_id=body["people_id"],user_id=body["user_id"])
+    favorite_person = FavoritePeople(people_name=body["people_name"],user_email=body["user_email"])
     db.session.add(favorite_person)
     db.session.commit()
     return jsonify(favorite_person.serialize()), 200
@@ -83,7 +83,7 @@ def create_favorite_person(people_id):
 @app.route('/favorite/planet/<int:planets_id>', methods=['POST'])
 def create_favorite_planet(planets_id):
     body = request.get_json()
-    favorite_planet = FavoritePlanets(planets_id=body["planets_id"],user_id=body["user_id"])
+    favorite_planet = FavoritePlanets(planets_name=body["planets_name"],user_email=body["user_email"])
     db.session.add(favorite_planet)
     db.session.commit()
     return jsonify(favorite_planet.serialize()), 200
