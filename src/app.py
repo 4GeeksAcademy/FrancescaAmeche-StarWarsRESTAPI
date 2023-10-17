@@ -64,10 +64,10 @@ def view_planet(planet_id):
     planet = Planets.query.filter_by(id=planet_id).first()
     return jsonify(planet.serialize()), 200
 
-@app.route('/user/favorites/<int:user_id>', methods=['GET'])
-def view_favorites(user_id):
-    favorite_people = FavoritePeople.query.filter_by(id=user_id).all()
-    favorite_planets = FavoritePlanets.query.filter_by(id=user_id).all()
+@app.route('/user/favorites', methods=['GET'])
+def view_favorites():
+    favorite_people = FavoritePeople.query.all()
+    favorite_planets = FavoritePlanets.query.all()
     favorites = favorite_planets + favorite_people
     result = list(map(lambda item: item.serialize(), favorites))
     return jsonify(result), 200
@@ -78,17 +78,29 @@ def create_favorite_person(people_id):
     favorite_person = FavoritePeople(people_id=body["people_id"],user_id=body["user_id"])
     db.session.add(favorite_person)
     db.session.commit()
-    response_body = {"crear un favorito"}
-    return jsonify(response_body), 200
+    return jsonify(favorite_person.serialize()), 200
 
-@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
-def create_favorite_planet(planet_id):
+@app.route('/favorite/planet/<int:planets_id>', methods=['POST'])
+def create_favorite_planet(planets_id):
     body = request.get_json()
-    favorite_planet = FavoritePlanets(planet_id=body["planet_id"],user_id=body["user_id"])
+    favorite_planet = FavoritePlanets(planets_id=body["planets_id"],user_id=body["user_id"])
     db.session.add(favorite_planet)
     db.session.commit()
-    response_body = {"crear un favorito"}
-    return jsonify(response_body), 200
+    return jsonify(favorite_planet.serialize()), 200
+
+@app.route('/favorite/people/<int:people_id>', methods=['DELETE'])
+def delete_favorite_person(people_id):
+    delete_favorite = FavoritePeople.query.filter_by(id=people_id).first()
+    db.session.delete(delete_favorite)
+    db.session.commit()
+    return jsonify(), 200
+
+@app.route('/favorite/planet/<int:planets_id>', methods=['DELETE'])
+def delete_favorite_planet(planets_id):
+    delete_favorite = FavoritePlanets.query.filter_by(id=planets_id).first()
+    db.session.delete(delete_favorite)
+    db.session.commit()
+    return jsonify(), 200
 
 
 # this only runs if `$ python src/app.py` is executed
